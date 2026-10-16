@@ -1,0 +1,12 @@
+node_modules/
+dist/
+coverage/
+*.tsbuildinfo
+.env*
+!.env.example
+*.backup.json
+meusaldo-backup-*.json
+meusaldo-movimentos-*.csv
+test-results/
+playwright-report/
+.DS_Store
