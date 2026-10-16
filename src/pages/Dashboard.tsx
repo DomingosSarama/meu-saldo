@@ -20,11 +20,21 @@ type Props = {
   month: string;
   add: (kind?: MovementKind) => void;
   edit: (m: Movement) => void;
+  remove: (m: Movement) => void;
   navigate: (page: 'movements' | 'wallets' | 'budgets' | 'settings') => void;
   toggleHidden: () => void;
   setBudget: () => void;
 };
-export function Dashboard({ s, month, add, edit, navigate, toggleHidden, setBudget }: Props) {
+export function Dashboard({
+  s,
+  month,
+  add,
+  edit,
+  remove,
+  navigate,
+  toggleHidden,
+  setBudget,
+}: Props) {
   const hidden = s.preferences.hidden;
   const movements = inMonth(s.movements, month);
   const current = totals(movements);
@@ -151,6 +161,7 @@ export function Dashboard({ s, month, add, edit, navigate, toggleHidden, setBudg
                   .sort((a, b) => b.occurredAt.localeCompare(a.occurredAt))
                   .slice(0, 5)}
                 onEdit={edit}
+                onDelete={remove}
               />
             ) : (
               <Empty

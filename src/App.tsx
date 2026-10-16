@@ -110,6 +110,22 @@ function FinanceApp({ s }: { s: Snapshot }) {
   };
   const add = (kind: MovementKind = 'expense') => setModal({ type: 'movement', kind });
   const edit = (existing: Movement) => setModal({ type: 'movement', existing });
+  function removeMovement(movement: Movement) {
+    const label =
+      movement.description ||
+      s.categories.find((c) => c.id === movement.categoryId)?.name ||
+      'Transferência';
+    setModal({
+      type: 'confirm',
+      title: 'Eliminar movimento?',
+      message: `Vais eliminar «${label}». Os saldos serão recalculados. Esta operação não pode ser desfeita.`,
+      label: 'Eliminar movimento',
+      action: async () => {
+        await finance.deleteMovement(movement.id);
+        done('Movimento eliminado.');
+      },
+    });
+  }
   function navigate(next: Page) {
     setPage(next);
     location.hash = next;
@@ -322,6 +338,7 @@ function FinanceApp({ s }: { s: Snapshot }) {
               month={month}
               add={add}
               edit={edit}
+              remove={removeMovement}
               navigate={navigate}
               toggleHidden={() =>
                 finance
@@ -341,6 +358,7 @@ function FinanceApp({ s }: { s: Snapshot }) {
               key={walletFilter}
               s={s}
               edit={edit}
+              remove={removeMovement}
               add={() => add()}
               initialWallet={walletFilter}
             />
@@ -473,20 +491,7 @@ function FinanceApp({ s }: { s: Snapshot }) {
               existing={modal.existing}
               initialKind={modal.kind}
               done={done}
-              onDelete={() => {
-                const id = modal.existing!.id;
-                setModal({
-                  type: 'confirm',
-                  title: 'Eliminar movimento?',
-                  message:
-                    'Esta operação remove o movimento e recalcula os saldos. Não pode ser desfeita.',
-                  label: 'Eliminar movimento',
-                  action: async () => {
-                    await finance.deleteMovement(id);
-                    done('Movimento eliminado.');
-                  },
-                });
-              }}
+              onDelete={() => removeMovement(modal.existing!)}
             />
           )}
           {modal.type === 'wallet' && <WalletForm existing={modal.existing} done={done} />}

@@ -140,16 +140,56 @@ test('categoria personalizada em Outros, carteira, filtros e eliminação confir
   await page.getByLabel('Pesquisar movimentos').fill('Alimentação');
   const row = page.locator('.movement-row');
   await expect(row).toHaveCount(1);
-  await row.click();
+  await row.locator('.movement-open').click();
   await page.getByRole('dialog').getByRole('button', { name: 'Eliminar movimento' }).click();
   await expect(page.getByRole('dialog')).toContainText('Eliminar movimento?');
   await page.getByRole('dialog').getByRole('button', { name: 'Cancelar', exact: true }).click();
   await expect(row).toHaveCount(1);
-  await row.click();
+  await row.locator('.movement-open').click();
   await page.getByRole('dialog').getByRole('button', { name: 'Eliminar movimento' }).click();
   await page
     .getByRole('dialog')
     .getByRole('button', { name: 'Eliminar movimento', exact: true })
     .click();
   await expect(page.getByText('Nenhum movimento encontrado')).toBeVisible();
+});
+
+test('botão visível de eliminar confirma, permite cancelar e persiste offline', async ({
+  page,
+  context,
+}) => {
+  await start(page);
+  await page.getByRole('button', { name: 'Nova despesa', exact: true }).click();
+  await fillAmount(page, '50');
+  await page
+    .getByRole('dialog')
+    .getByLabel('Descrição', { exact: false })
+    .fill('Gravada por engano');
+  await saveMovement(page);
+  await context.setOffline(true);
+  await page.reload();
+  await page.setViewportSize({ width: 320, height: 568 });
+  const remove = page.getByRole('button', { name: 'Eliminar Gravada por engano', exact: true });
+  await remove.scrollIntoViewIfNeeded();
+  await expect(remove).toBeInViewport();
+  const target = await remove.boundingBox();
+  expect(target!.height).toBeGreaterThanOrEqual(44);
+  expect(target!.width).toBeGreaterThanOrEqual(44);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await remove.click();
+  await expect(page.getByRole('dialog')).toContainText('Eliminar movimento?');
+  await expect(page.getByRole('dialog')).toContainText('Gravada por engano');
+  await page.getByRole('dialog').getByRole('button', { name: 'Cancelar', exact: true }).click();
+  await expect(remove).toBeVisible();
+  await remove.click();
+  await page
+    .getByRole('dialog')
+    .getByRole('button', { name: 'Eliminar movimento', exact: true })
+    .click();
+  await expect(page.getByText('Um novo começo para as tuas finanças')).toBeVisible();
+  await page.reload();
+  await expect(page.getByText('Um novo começo para as tuas finanças')).toBeVisible();
+  await expect(
+    page.getByRole('button', { name: 'Eliminar Gravada por engano', exact: true }),
+  ).toHaveCount(0);
 });
