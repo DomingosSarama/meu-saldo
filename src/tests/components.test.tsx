@@ -97,8 +97,13 @@ describe('fluxos principais', () => {
     const user = userEvent.setup();
     render(<App />);
     await user.click(await screen.findByRole('button', { name: 'Ocultar valores' }));
-    expect(await screen.findByRole('button', { name: 'Mostrar valores' })).toBeInTheDocument();
-    expect((await db.snapshot()).preferences.hidden).toBe(true);
+    // IndexedDB commits and the live query render settle asynchronously on shared CI runners.
+    await waitFor(async () => expect((await db.snapshot()).preferences.hidden).toBe(true), {
+      timeout: 5000,
+    });
+    expect(
+      await screen.findByRole('button', { name: 'Mostrar valores' }, { timeout: 5000 }),
+    ).toBeInTheDocument();
     expect(screen.queryByText(/0,00 MT/)).not.toBeInTheDocument();
   });
 });
