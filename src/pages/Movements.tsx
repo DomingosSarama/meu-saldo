@@ -7,11 +7,13 @@ import { dateInput } from '../utils/dates';
 export function Movements({
   s,
   edit,
+  remove,
   add,
   initialWallet = '',
 }: {
   s: Snapshot;
   edit: (m: Movement) => void;
+  remove: (m: Movement) => void;
   add: () => void;
   initialWallet?: string;
 }) {
@@ -203,7 +205,7 @@ export function Movements({
       </div>
       <section className="panel">
         {movements.length ? (
-          <MovementList s={s} movements={movements} onEdit={edit} />
+          <MovementList s={s} movements={movements} onEdit={edit} onDelete={remove} />
         ) : (
           <Empty
             title={hasFilters ? 'Nenhum movimento encontrado' : 'O teu histórico começa aqui'}

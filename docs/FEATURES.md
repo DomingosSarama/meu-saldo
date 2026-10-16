@@ -11,7 +11,7 @@ Sem despesas, os gráficos apresentam estados vazios. A comparação percentual 
 - Criar receitas, despesas e transferências; data/hora actual preenchida automaticamente e editável.
 - Valor positivo em MT com até duas casas decimais; descrição, método e observações opcionais.
 - Categoria, subcategoria opcional e carteira. A transferência exige origem e destino distintos.
-- Tocar num movimento para editar. Eliminar exige confirmação e recalcula o saldo.
+- Tocar num movimento para editar. Cada linha no dashboard e no histórico tem um botão **Eliminar**, com ícone de lixo e texto. A eliminação identifica o registo e exige confirmação; cancelar preserva-o. O botão continua disponível no formulário de edição. Eliminar receitas, despesas ou transferências recalcula os saldos, incluindo as duas carteiras de uma transferência.
 - Pesquisar descrição, notas, categoria e subcategoria. Filtrar por carteira (incluindo transferências recebidas), tipo e categoria.
 - Períodos: hoje, semana até hoje (segunda-feira como início), mês até hoje, mês anterior, ano até hoje, todo o histórico e datas personalizadas inclusivas.
 - Ordenar por data crescente/decrescente ou por montante.

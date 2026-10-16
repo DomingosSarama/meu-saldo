@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { ArrowRight, ArrowRightLeft, ChevronRight, ReceiptText } from 'lucide-react';
+import { ArrowRight, ArrowRightLeft, ChevronRight, ReceiptText, Trash2 } from 'lucide-react';
 import type { Movement, Snapshot } from '../models/finance';
 import { money } from '../utils/money';
 import { shortDate } from '../utils/dates';
@@ -52,10 +52,12 @@ export function MovementList({
   s,
   movements,
   onEdit,
+  onDelete,
 }: {
   s: Snapshot;
   movements: Movement[];
   onEdit: (m: Movement) => void;
+  onDelete: (m: Movement) => void;
 }) {
   return (
     <div className="movement-list">
@@ -63,36 +65,55 @@ export function MovementList({
         const category = s.categories.find((c) => c.id === m.categoryId);
         const wallet = s.wallets.find((w) => w.id === m.walletId);
         const to = s.wallets.find((w) => w.id === m.toWalletId);
+        const label = m.description || category?.name || 'Transferência';
         return (
-          <button className="movement-row" key={m.id} onClick={() => onEdit(m)}>
-            <CategoryIcon category={category} />
-            <span className="movement-info">
-              <strong>{m.description || category?.name || 'Transferência'}</strong>
-              <span>
-                {wallet?.name}
-                {to && (
+          <div className="movement-row" key={m.id}>
+            <button
+              type="button"
+              className="movement-open"
+              aria-label={`Editar ${label}`}
+              onClick={() => onEdit(m)}
+            >
+              <CategoryIcon category={category} />
+              <span className="movement-info">
+                <strong>{label}</strong>
+                <span>
+                  {wallet?.name}
+                  {to && (
+                    <>
+                      <ArrowRight size={10} />
+                      {to.name}
+                    </>
+                  )}
+                  <span className="dot">·</span>
+                  {shortDate(m.occurredAt)}
+                </span>
+              </span>
+              <span className={`movement-amount ${m.kind === 'income' ? 'green' : ''}`}>
+                {s.preferences.hidden ? (
+                  '••••'
+                ) : (
                   <>
-                    <ArrowRight size={10} />
-                    {to.name}
+                    {m.kind === 'expense' ? '−' : m.kind === 'income' ? '+' : ''}
+                    <Value amount={m.amount} />
                   </>
                 )}
-                <span className="dot">·</span>
-                {shortDate(m.occurredAt)}
+                <small>
+                  {m.kind === 'transfer' ? <ArrowRightLeft size={13} /> : category?.name}
+                </small>
               </span>
-            </span>
-            <span className={`movement-amount ${m.kind === 'income' ? 'green' : ''}`}>
-              {s.preferences.hidden ? (
-                '••••'
-              ) : (
-                <>
-                  {m.kind === 'expense' ? '−' : m.kind === 'income' ? '+' : ''}
-                  <Value amount={m.amount} />
-                </>
-              )}
-              <small>{m.kind === 'transfer' ? <ArrowRightLeft size={13} /> : category?.name}</small>
-            </span>
-            <ChevronRight size={15} className="muted" />
-          </button>
+              <ChevronRight size={15} className="muted" />
+            </button>
+            <button
+              type="button"
+              className="movement-delete"
+              aria-label={`Eliminar ${label}`}
+              onClick={() => onDelete(m)}
+            >
+              <Trash2 size={16} aria-hidden="true" />
+              <span>Eliminar</span>
+            </button>
+          </div>
         );
       })}
     </div>

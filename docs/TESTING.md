@@ -14,7 +14,7 @@ Os testes Vitest cobrem conversão monetária, receita/despesa, edição/elimina
 
 ## Verificação em navegador
 
-Os dois testes Playwright em `e2e/finance.pw.ts` repetem os fluxos de registo, transferências, operações offline, exportação/recuperação, categorias em Outros, carteiras, pesquisa e confirmação/cancelamento da eliminação. Usam um contexto isolado com emulação de iPhone e apenas dados sintéticos de teste. Também correm em GitHub Actions antes de publicar.
+Os testes Playwright em `e2e/finance.pw.ts` repetem os fluxos de registo, transferências, operações offline, exportação/recuperação, categorias em Outros, carteiras, pesquisa e confirmação/cancelamento da eliminação. Um terceiro percurso verifica o botão Eliminar directamente na lista, o alvo de toque de pelo menos 44 px e a persistência da eliminação offline em 320 px. Usam um contexto isolado com emulação de iPhone e apenas dados sintéticos de teste. Também correm em GitHub Actions antes de publicar.
 
 ```sh
 npm run build
@@ -46,6 +46,6 @@ O modo de ocultar valores é visual; IndexedDB e backups não estão encriptados
 
 ## Resultado verificado nesta entrega
 
-Em 16 de Outubro de 2026 passaram lint, 24 testes Vitest de dados/componentes, os 2 percursos Playwright, TypeScript, build PWA e auditoria npm. A auditoria final não indicou vulnerabilidades conhecidas. O percurso de ponta a ponta em Chromium confirmou reabertura offline, gravação/edição offline, backup JSON, rejeição de ficheiro inválido, restauração confirmada, tema e ocultação de valores, sem erros de execução. O layout foi inspeccionado em desktop e em 390 px; também foi verificado sem deslocamento horizontal em 320 px. Estes resultados não substituem os testes pendentes em Safari/iPhone real acima.
+Em 16 de Outubro de 2026 passaram lint, 27 testes Vitest de dados/componentes, os 3 percursos Playwright, TypeScript, build PWA e auditoria npm. A auditoria final não indicou vulnerabilidades conhecidas. O percurso de ponta a ponta em Chromium confirmou reabertura offline, gravação/edição offline, backup JSON, rejeição de ficheiro inválido, restauração confirmada, tema e ocultação de valores, sem erros de execução. O layout foi inspeccionado em desktop e em 390 px; também foi verificado sem deslocamento horizontal em 320 px. Estes resultados não substituem os testes pendentes em Safari/iPhone real acima.
 
 O build pode emitir dois avisos de anotações `@__PURE__` da biblioteca Zod, removidas pelo Rollup. Não são erros de TypeScript nem impedem o precache ou o funcionamento. Não foram ocultados na configuração.
